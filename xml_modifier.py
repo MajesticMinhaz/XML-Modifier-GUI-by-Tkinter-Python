@@ -14,6 +14,12 @@ from tkinter import Canvas
 from tkinter import LEFT
 from tkinter import BOTH
 from tkinter import YES
+from tkinter import VERTICAL
+from tkinter import RIGHT
+from tkinter import Y
+from tkinter import Frame
+from tkinter.ttk import Style
+from tkinter.ttk import Scrollbar
 
 
 if __name__ == '__main__':
@@ -38,5 +44,33 @@ if __name__ == '__main__':
         fill=BOTH,
         expand=YES
     )
+
+    style = Style()
+    style.theme_use('clam')
+
+    scroll_bar = Scrollbar(
+        master=root,
+        orient=VERTICAL,
+        command=canvas.yview,
+    )
+    scroll_bar.pack(
+        side=RIGHT,
+        fill=Y,
+        padx=10,
+        pady=10
+    )
+
+    canvas.bind(
+        sequence='<Configure>',
+        func=lambda e: canvas.configure(
+            scrollregion=canvas.bbox('all')
+        )
+    )
+
+    frame = Frame(
+        master=canvas
+    )
+    frame.grid(row=0, column=0)
+    canvas.create_window((0, 0), window=frame, anchor="nw")
 
     root.mainloop()
