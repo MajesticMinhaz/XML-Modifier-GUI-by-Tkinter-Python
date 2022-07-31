@@ -10,26 +10,33 @@
 ===========================================================================================================
 """
 from tkinter import Tk
-from tkinter.ttk import LabelFrame
+from tkinter import Canvas
+from tkinter import LEFT
+from tkinter import BOTH
+from tkinter import YES
 
 
 if __name__ == '__main__':
     root = Tk()
+    root.configure(
+        background="gray20",
+        padx=10,
+        pady=10
+    )
     root.title("XML Modifier")
     root.resizable(width=False, height=False)
 
-    label_frame = LabelFrame(
+    canvas = Canvas(
         master=root,
-        text="XML Modifier",
-        padding=10,
-        border=2
+        background="gray20",
+        border=10,
+        width=780,
+        height=640
     )
-
-    label_frame.grid(
-        row=0,
-        column=0,
-        padx=10,
-        pady=10
+    canvas.pack(
+        side=LEFT,
+        fill=BOTH,
+        expand=YES
     )
 
     root.mainloop()
