@@ -25,4 +25,11 @@ if __name__ == '__main__':
         border=2
     )
 
+    label_frame.grid(
+        row=0,
+        column=0,
+        padx=10,
+        pady=10
+    )
+
     root.mainloop()
