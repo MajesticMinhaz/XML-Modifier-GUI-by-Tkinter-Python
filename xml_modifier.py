@@ -10,11 +10,19 @@
 ===========================================================================================================
 """
 from tkinter import Tk
+from tkinter.ttk import LabelFrame
 
 
 if __name__ == '__main__':
     root = Tk()
     root.title("XML Modifier")
     root.resizable(width=False, height=False)
+
+    label_frame = LabelFrame(
+        master=root,
+        text="XML Modifier",
+        padding=10,
+        border=2
+    )
 
     root.mainloop()
