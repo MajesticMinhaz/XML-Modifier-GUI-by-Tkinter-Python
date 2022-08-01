@@ -21,7 +21,6 @@ from tkinter import Frame
 from tkinter.ttk import Style
 from tkinter.ttk import Scrollbar
 
-
 if __name__ == '__main__':
     root = Tk()
     root.configure(
@@ -34,7 +33,6 @@ if __name__ == '__main__':
 
     canvas = Canvas(
         master=root,
-        background="gray20",
         border=10,
         width=780,
         height=640
