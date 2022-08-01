@@ -213,7 +213,7 @@ class Widgets(Entry, Label, Button):
             variable_name: IntVar,
             row: int,
             column: int,
-            command=lambda: None
+            command=None
     ) -> Union[Checkbutton, Checkbutton]:
         check_btn = Checkbutton(
             master=self.master,
@@ -222,7 +222,9 @@ class Widgets(Entry, Label, Button):
             background="#1f3fed",
             text=check_btn_text,
             activeforeground="yellow",
-            activebackground="blue"
+            activebackground="blue",
+            command=command,
+            variable=variable_name
         )
         check_btn.grid(
             row=row,
