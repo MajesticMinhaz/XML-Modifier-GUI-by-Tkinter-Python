@@ -19,124 +19,116 @@ class Widgets(Entry, Label, Button):
 
     def label(
             self,
-            label_text: str,
+            text: str,
             row: int,
             column: int
     ) -> Union[Label, Label]:
-        label = Label(
-            master=self.master,
-            text=label_text,
-            foreground="#050930",
-            justify=RIGHT,
-            anchor="ne",
-            width=30
-        )
-        label.grid(
-            row=row,
-            column=column
-        )
+        label = Label(master=self.master, text=text, background="gray20", foreground="orange", anchor="ne", width=35)
+        label.grid(row=row, column=column)
 
         return label
 
     def edit_text(
             self,
-            section_name: str,
-            row: int,
-            width: int = 60,
-            show=None,
-            number_of_input_box: int = 1,
-            file_selector: bool = False,
-            select_file_expression: str = None,
-            base_path: bool = False,
-            need_dropdown: bool = False,
-            dropdown_variable_name: StringVar = None,
-            dropdown_options: list = None
+            manager: dict,
+            width: int = 50,
+            show: str = None
     ):
         self.label(
-            label_text=section_name,
-            row=row,
+            text=manager.get("field_name"),
+            row=manager.get("row"),
             column=0
         )
+        manager["variable"] = StringVar()
 
-        if number_of_input_box == 1 and file_selector:
+        if manager.get("number_of_input_field") == 1 and manager.get("is_file_selector"):
             edit_text = Entry(
                 master=self.master,
-                width=int(width + 7),
+                width=int(width + 8),
                 show=show,
                 background="#7883f0",
+                borderwidth=0,
                 fg="#050930",
-                cursor="arrow"
+                cursor="arrow",
+                textvariable=manager.get("variable")
             )
             edit_text.grid(
-                row=row,
+                row=manager.get("row"),
                 column=1,
                 columnspan=2,
-                padx=5
+                padx=5,
+                pady=5
             )
-            edit_text.insert(
-                index=0,
-                string=f'Select your {section_name}'
-            )
+            edit_text.insert(index=0, string=f'Select your {manager.get("field_name")}')
             edit_text.bind(
                 sequence='<Button-1>',
-                func=lambda a=f"Select your {section_name}", b=section_name, c=select_file_expression, d=base_path:
+                func=lambda a=manager.get("placeholder"), b=manager.get("field_name"), c=manager.get('file_expression'), d=manager.get("base_path"):
                 browse_file(
                     edit_text, a, b, c, str(d)
                 )
             )
             return edit_text
-        elif number_of_input_box == 1 and not file_selector:
+
+        elif manager.get("number_of_input_field") == 1 and not manager.get("is_file_selector"):
             edit_text = Entry(
                 master=self.master,
-                width=int(width + 7),
+                width=int(width + 8),
                 show=show,
                 background="#fa1b2e",
                 fg="#85e2ff",
-                cursor="arrow"
+                cursor="arrow",
+                textvariable=manager.get("variable"),
+                validate="focusout",
+                validatecommand=lambda: edit_text_validator(
+                    condition=manager.get("condition"),
+                    variable=manager.get("variable"),
+                    edit_text=edit_text,
+                    err_msg=manager.get("error_msg")
+                )
             )
             edit_text.grid(
-                row=row,
+                row=manager.get("row"),
                 column=1,
-                columnspan=2
+                columnspan=2,
+                pady=5
             )
             return edit_text
-        elif number_of_input_box == 2 and not need_dropdown:
+
+        elif manager.get("number_of_input_field") == 2 and not manager.get("is_dropdown"):
             edit_text_actual = Entry(
                 master=self.master,
                 width=int(width / 2),
                 show=show,
                 cursor="none",
                 borderwidth=0,
-                background="#6e6e6e",
+                background="gray20",
                 disabledbackground="#6e6e6e",
                 disabledforeground="#bfc9ff"
             )
-            edit_text_actual.insert(0, "Hi")
-            edit_text_actual.configure(state="disabled")
             edit_text_new = Entry(
                 master=self.master,
                 width=int(width / 2 + 6),
                 show=show,
-                background="#438f00",
+                borderwidth=0,
+                background="gray20",
                 fg="#00eded",
-                cursor="arrow"
+                cursor="arrow",
+                textvariable=manager.get("variable"),
+                validate="focusout",
+                validatecommand=lambda: edit_text_validator(
+                    condition=manager.get("condition"),
+                    variable=manager.get("variable"),
+                    edit_text=edit_text_new,
+                    err_msg=manager.get("error_msg")
+                )
             )
 
-            edit_text_actual.grid(
-                row=row,
-                column=1,
-                columnspan=1,
-                padx=5
-            )
-            edit_text_new.grid(
-                row=row,
-                column=2,
-                columnspan=1
-            )
-
+            edit_text_actual.grid(row=manager.get("row"), column=1, columnspan=1, pady=5)
+            edit_text_new.grid(row=manager.get("row"), column=2, columnspan=1, pady=5)
             return edit_text_actual, edit_text_new
-        elif number_of_input_box == 2 and need_dropdown:
-            dropdown_variable_name.set(dropdown_options[0])
+
+        elif manager.get("number_of_input_field") == 2 and manager.get("is_dropdown"):
+            manager["variable"].set(manager.get("options")[0])
 
             edit_text_actual = Entry(
                 master=self.master,
@@ -144,33 +136,24 @@ class Widgets(Entry, Label, Button):
                 show=show,
                 cursor="none",
                 borderwidth=0,
-                background="#6e6e6e",
+                background="gray20",
                 disabledbackground="#6e6e6e",
                 disabledforeground="#bfc9ff"
             )
-            dropdown_variable_name.set(dropdown_options[0])
+
             dropdown = Combobox(
                 master=self.master,
-                textvariable=dropdown_variable_name,
+                textvariable=manager.get("variable"),
                 background="green",
-                values=dropdown_options,
+                values=manager.get("options"),
                 width=int(width / 2 + 4),
                 postcommand=lambda: dropdown_disabled(dropdown),
                 cursor="arrow",
-                foreground="blue"
+                foreground="black"
             )
 
-            edit_text_actual.grid(
-                row=row,
-                column=1,
-                columnspan=1
-            )
-
-            dropdown.grid(
-                row=row,
-                column=2,
-                columnspan=1
-            )
+            edit_text_actual.grid(row=manager.get("row"), column=1, columnspan=1)
+            dropdown.grid(row=manager.get("row"), column=2, columnspan=1)
 
             return edit_text_actual, dropdown
         else:
@@ -200,11 +183,8 @@ class Widgets(Entry, Label, Button):
             height=1,
             width=width
         )
-        button.grid(
-            row=row,
-            column=column,
-            columnspan=1
-        )
+        button.grid(row=row, column=column, columnspan=1)
+
         return button
 
     def check_button(
@@ -226,9 +206,5 @@ class Widgets(Entry, Label, Button):
             command=command,
             variable=variable_name
         )
-        check_btn.grid(
-            row=row,
-            column=column,
-            columnspan=1
-        )
+        check_btn.grid(row=row, column=column, columnspan=1)
         return check_btn
