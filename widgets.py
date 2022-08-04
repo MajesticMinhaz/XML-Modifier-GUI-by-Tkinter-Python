@@ -194,7 +194,7 @@ class Widgets(Entry, Label, Button):
             height=1,
             width=width
         )
-        button.grid(row=row, column=column, columnspan=1)
+        button.grid(row=row, column=column, columnspan=1, pady=5)
 
         return button
 
