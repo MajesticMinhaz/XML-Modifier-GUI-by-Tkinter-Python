@@ -1,3 +1,14 @@
+"""
+===========================================================================================================
+                                File        ui.py (Entry point)
+                                Author      Md. Minhaz
+                                Email       mdm047767@gmail.com
+                                Hire Me     https://pph.me/mdminhaz2003/
+                                Repo Link   https://github.com/mdminhaz2003/XML-Modifier-GUI-by-Tkinter-Python
+                                Location    Bangladesh
+                                Date        04-08-2022 at 22:40:58 (GMT + 6)
+===========================================================================================================
+"""
 from widgets_info import widgets_info
 from widgets import Widgets
 
