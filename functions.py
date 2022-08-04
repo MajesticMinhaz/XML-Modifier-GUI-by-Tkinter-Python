@@ -31,3 +31,21 @@ def dropdown_disabled(dropdown):
     dropdown.configure(
         state="disabled"
     )
+
+
+def err_message_dialog(field_name: str = None, extra: bool = False, custom_msg: str = None) -> None:
+    if extra:
+        messagebox.showwarning("Error", custom_msg)
+    elif not extra:
+        messagebox.showwarning("Empty Field", f"{field_name} can't be empty.")
+    else:
+        messagebox.showwarning("Wrong !", "Something went wrong !")
+
+
+def edit_text_validator(condition: str, variable: StringVar, edit_text: Entry, err_msg: str) -> bool:
+    if not re.fullmatch(pattern=condition, string=variable.get()):
+        clear_edit_text(field_name=edit_text)
+        err_message_dialog(extra=True, custom_msg=err_msg)
+        return False
+    else:
+        return True
