@@ -2,13 +2,13 @@ from tkinter import Entry
 from tkinter import Label
 from tkinter import Button
 from tkinter import Checkbutton
-from tkinter import RIGHT
 from tkinter.ttk import Combobox
 from tkinter import StringVar
 from tkinter import IntVar
 from typing import Union
 from functions import browse_file
 from functions import dropdown_disabled
+from functions import edit_text_validator
 
 
 class Widgets(Entry, Label, Button):
