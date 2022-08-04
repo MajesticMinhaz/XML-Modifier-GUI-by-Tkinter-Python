@@ -6,18 +6,22 @@ widgets_info = {
         "field_name": "XML File",
         "row": 0,
         "is_file_selector": True,
+        "placeholder": f"Select XML File",
         "file_expression": "*.xml",
         "number_of_input_field": 1,
         "is_dropdown": False,
+        "base_path": False,
         "variable": StringVar,
     },
     "csv_file_path": {
         "field_name": "CSV File",
         "row": 1,
         "is_file_selector": True,
+        "placeholder": "Select CSV File",
         "file_expression": "*.csv",
         "number_of_input_field": 1,
         "is_dropdown": False,
+        "base_path": False,
         "variable": StringVar,
     },
     "request_id": {
@@ -26,7 +30,8 @@ widgets_info = {
         "is_file_selector": False,
         "number_of_input_field": 1,
         "is_dropdown": False,
-        "should_readonly": True,
+        "condition": r".*-App",
+        "error_msg": "It should be empty, this field will filled up automatically.",
         "variable": StringVar,
     },
     "twin_iteration_n": {
@@ -341,7 +346,7 @@ widgets_info = {
     },
     "min_hours_break": {
         "field_name": "Min Hours Break",
-        "row": 42,
+        "row": 43,
         "is_file_selector": False,
         "number_of_input_field": 2,
         "is_dropdown": False,
@@ -379,4 +384,85 @@ widgets_info = {
         "error_msg": "Iterations value should be (50 - 300)",
         "variable": StringVar,
     },
+    "delay_mandatory": {
+        "field_name": "Delay Mandatory",
+        "row": 21,
+        "is_file_selector": False,
+        "number_of_input_field": 2,
+        "is_dropdown": True,
+        "options": ["Y", "N"],
+        "variable": StringVar
+    },
+    "allocate_mandatory": {
+        "field_name": "Allocate Mandatory",
+        "row": 26,
+        "is_file_selector": False,
+        "number_of_input_field": 2,
+        "is_dropdown": True,
+        "options": ["Y", "N"],
+        "variable": StringVar
+    },
+    "group_service_mandatory": {
+        "field_name": "Group Service Mandatory",
+        "row": 31,
+        "is_file_selector": False,
+        "number_of_input_field": 2,
+        "is_dropdown": True,
+        "options": ["Y", "N"],
+        "variable": StringVar
+    },
+    "allocate_mode": {
+        "field_name": "Allocate Mode",
+        "row": 35,
+        "is_file_selector": False,
+        "number_of_input_field": 2,
+        "is_dropdown": True,
+        "options": ["NumberOfServices", "LoadDistribution", "Work"],
+        "variable": StringVar
+    },
+    "avoid_overtime": {
+        "field_name": "Avoid Overtime",
+        "row": 37,
+        "is_file_selector": False,
+        "number_of_input_field": 2,
+        "is_dropdown": True,
+        "options": ["Y", "N"],
+        "variable": StringVar
+    },
+    "avoid_extra_driving": {
+        "field_name": "Avoid Extra Driving",
+        "row": 40,
+        "is_file_selector": False,
+        "number_of_input_field": 2,
+        "is_dropdown": True,
+        "options": ["Y", "N"],
+        "variable": StringVar
+    },
+    "route_weight": {
+        "field_name": "Route Weight",
+        "row": 42,
+        "is_file_selector": False,
+        "number_of_input_field": 2,
+        "is_dropdown": True,
+        "options": ["Time", "Distance"],
+        "variable": StringVar
+    },
+    "restrict_service_window": {
+        "field_name": "Restrict Service Window",
+        "row": 44,
+        "is_file_selector": False,
+        "number_of_input_field": 2,
+        "is_dropdown": True,
+        "options": ["Y", "N"],
+        "variable": StringVar
+    },
+    "all_vehicles": {
+        "field_name": "All Vehicles",
+        "row": 46,
+        "is_file_selector": False,
+        "number_of_input_field": 2,
+        "is_dropdown": True,
+        "options": ["Y", "N"],
+        "variable": StringVar
+    }
 }
