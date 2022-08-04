@@ -18,57 +18,27 @@ from tkinter import VERTICAL
 from tkinter import RIGHT
 from tkinter import Y
 from tkinter import Frame
-from tkinter.ttk import Style
 from tkinter.ttk import Scrollbar
+from widgets import Widgets
+from ui import Ui
 
 if __name__ == '__main__':
     root = Tk()
-    root.configure(
-        background="gray20",
-        padx=10,
-        pady=10
-    )
+    root.configure(background="gray20")
     root.title("XML Modifier")
     root.resizable(width=False, height=False)
+    label_frame = Frame(master=root, background="gray20")
+    label_frame.grid(row=0, column=0, padx=10, pady=10)
 
-    canvas = Canvas(
-        master=root,
-        border=10,
-        width=780,
-        height=640
-    )
-    canvas.pack(
-        side=LEFT,
-        fill=BOTH,
-        expand=YES
-    )
-
-    style = Style()
-    style.theme_use('clam')
-
-    scroll_bar = Scrollbar(
-        master=root,
-        orient=VERTICAL,
-        command=canvas.yview,
-    )
-    scroll_bar.pack(
-        side=RIGHT,
-        fill=Y,
-        padx=10,
-        pady=10
-    )
-
-    canvas.bind(
-        sequence='<Configure>',
-        func=lambda e: canvas.configure(
-            scrollregion=canvas.bbox('all')
-        )
-    )
-
-    frame = Frame(
-        master=canvas
-    )
-    frame.grid(row=0, column=0)
-    canvas.create_window((0, 0), window=frame, anchor="nw")
-
+    canvas = Canvas(master=label_frame, width=880, height=640, background="gray20")
+    canvas.pack(side=LEFT, fill=BOTH, expand=YES)
+    y_scroll_bar = Scrollbar(master=label_frame, orient=VERTICAL, command=canvas.yview)
+    y_scroll_bar.pack(side=RIGHT, fill=Y, padx=5, pady=5)
+    canvas.configure(yscrollcommand=y_scroll_bar.set)
+    canvas.bind('<Configure>', lambda e: canvas.configure(scrollregion=canvas.bbox('all')))
+    my_frame = Frame(canvas, background="gray20")
+    widgets = Widgets(master=my_frame)
+    canvas.create_window((0, 0), window=my_frame, anchor="nw")
+    ui = Ui(master=widgets)
+    ui.edit_text_packer()
     root.mainloop()
