@@ -37,7 +37,7 @@ widgets_info = {
     },
     "request_id": {
         "field_name": "Request ID",
-        "row": 2,
+        "row": 3,
         "is_file_selector": False,
         "number_of_input_field": 1,
         "is_dropdown": False,
