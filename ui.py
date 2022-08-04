@@ -11,11 +11,16 @@
 """
 from widgets_info import widgets_info
 from widgets import Widgets
+from tkinter import IntVar
 
 
 class Ui:
     def __init__(self, master: Widgets):
         self.master = master
+
+        self.to_departure_location_check_btn = None
+        self.to_departure_location_check_btn_status = IntVar()
+        self.to_departure_location_check_btn_status.set(1)
 
         self.read_files_btn = None
         self.submit_btn = None
