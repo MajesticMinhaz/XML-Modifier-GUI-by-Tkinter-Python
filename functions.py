@@ -1,3 +1,14 @@
+"""
+===========================================================================================================
+                                File        functions.py (Functions Store)
+                                Author      Md. Minhaz
+                                Email       mdm047767@gmail.com
+                                Hire Me     https://pph.me/mdminhaz2003/
+                                Repo Link   https://github.com/mdminhaz2003/XML-Modifier-GUI-by-Tkinter-Python
+                                Location    Bangladesh
+                                Date        04-08-2022 at 22:44:16 (GMT + 6)
+===========================================================================================================
+"""
 import os
 import re
 from tkinter import Entry
