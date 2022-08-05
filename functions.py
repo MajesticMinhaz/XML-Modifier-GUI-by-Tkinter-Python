@@ -16,6 +16,7 @@ from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import StringVar
 from typing import Literal
+from tkinter import IntVar
 
 
 def clear_edit_text(text_variable: StringVar) -> None:
@@ -70,3 +71,14 @@ def set_config(field_name: Entry, config: Literal["normal", "disabled", "readonl
 def is_empty(text_variable: StringVar) -> bool:
     return True if len(text_variable.get()).__eq__(0) else False
 
+
+def check_button_function(btn_variable: IntVar, *fields: Entry) -> None:
+    btn_status = btn_variable.get()
+    if btn_status == 1:
+        for field in fields:
+            field.delete(0, "end")
+            set_config(field_name=field, config="disabled")
+    else:
+        for field in fields:
+            field.delete(0, "end")
+            set_config(field_name=field, config="normal")
