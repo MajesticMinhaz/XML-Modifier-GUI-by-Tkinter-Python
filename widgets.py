@@ -217,5 +217,5 @@ class Widgets(Entry, Label, Button):
             command=command,
             variable=variable_name
         )
-        check_btn.grid(row=row, column=column, columnspan=1)
+        check_btn.grid(row=row, column=column, columnspan=2)
         return check_btn
