@@ -11,6 +11,7 @@
 """
 import re
 import os
+from datetime import timedelta
 from widgets_info import widgets_info
 from widgets import Widgets
 from tkinter import IntVar
@@ -19,6 +20,8 @@ from functions import err_message_dialog
 from xml.etree import ElementTree
 from functions import clear_edit_text
 from functions import check_button_function
+from functions import is_empty
+from tkinter import messagebox
 
 
 class Ui:
@@ -44,11 +47,13 @@ class Ui:
         self.first_service = None
         self.settings = None
 
-        self.time_format_matcher = re.compile(r'([0-2])([0-9]):([0-5])([0-9]):([0-5])([0-9])$')
+        self.time_format = re.compile(r'([0-1][0-9]|(2[0-3])):([0-5][0-9]):([0-5][0-9])$')
         self.vehicle_hours_start_datetime = None
         self.vehicle_hours_end_datetime = None
 
-    def edit_text_packer(self) -> None:
+        self.new_request_id = None
+
+    def widget_packer(self) -> None:
         for key, value in zip(widgets_info.keys(), widgets_info.values()):
             if value.get("no_need_pack") is None:
                 self.app[key] = self.master.edit_text(manager=value)
@@ -84,7 +89,7 @@ class Ui:
             btn_text="Submit",
             row=49,
             column=1,
-            command=None
+            command=self.submit_btn_handler
         )
 
     def read_xml(self):
@@ -118,11 +123,11 @@ class Ui:
             {"key": "request_id", "value": self.request_id},
             {
                 "key": "service_and_vehicle_hours_start",
-                "value": re.search(self.time_format_matcher, self.vehicle_hours_start_datetime).group()
+                "value": re.search(self.time_format, self.vehicle_hours_start_datetime).group()
             },
             {
                 "key": "service_and_vehicle_hours_end",
-                "value": re.search(self.time_format_matcher, self.vehicle_hours_end_datetime).group()
+                "value": re.search(self.time_format, self.vehicle_hours_end_datetime).group()
             },
             {
                 "key": "service_time",
@@ -260,3 +265,287 @@ class Ui:
             )
         else:
             pass
+
+    def submit_btn_handler(self) -> None:
+        check_btn_status = self.to_departure_location_check_btn_status.get()
+
+        # Checking Fields
+        if is_empty(widgets_info.get("twin_iteration_n")["variable"]):
+            err_message_dialog(field_name=widgets_info.get("twin_iteration_n")["field_name"])
+        elif check_btn_status.__eq__(0) and is_empty(widgets_info.get("arrival_location_longitude")["variable"]):
+            err_message_dialog(field_name=widgets_info.get("arrival_location_longitude")["field_name"])
+        elif check_btn_status.__eq__(0) and is_empty(widgets_info.get("arrival_location_latitude")["variable"]):
+            err_message_dialog(field_name=widgets_info.get("arrival_location_latitude")["field_name"])
+        else:
+            self.new_request_id = f'{self.request_id}-{widgets_info.get("twin_iteration_n")["variable"].get()}'
+            self.update_xml()
+
+    def update_xml(self):
+        ElementTree.register_namespace('', "https://lastmile.team")
+        ElementTree.register_namespace('xsd', "http://www.w3.org/2001/XMLSchema")
+        ElementTree.register_namespace('xsi', "http://www.w3.org/2001/XMLSchema-instance")
+
+        self.xml_root.find(f'./{self.xml_ns}Request').set('requestid', self.new_request_id)
+
+        if not is_empty(text_variable=widgets_info.get("service_and_vehicle_hours_start")["variable"]):
+            if re.fullmatch(self.time_format, widgets_info["service_and_vehicle_hours_start"]["variable"].get()):
+                new_start_time = widgets_info["service_and_vehicle_hours_start"]["variable"].get()
+                start_time = timedelta(
+                    hours=float(new_start_time[0:2]),
+                    minutes=float(new_start_time[3:5]),
+                    seconds=float(new_start_time[6:])
+                )
+
+                if is_empty(text_variable=widgets_info.get('service_and_vehicle_hours_end')['variable']):
+                    end_time = timedelta(
+                        hours=float(self.vehicle_hours_end_datetime[-8:-6]),
+                        minutes=float(self.vehicle_hours_end_datetime[-5:-3]),
+                        seconds=float(self.vehicle_hours_end_datetime[-2:])
+                    )
+
+                else:
+                    new_end_time = widgets_info["service_and_vehicle_hours_end"]["variable"].get()
+                    end_time = timedelta(
+                        hours=float(new_end_time[0:2]),
+                        minutes=float(new_end_time[3:5]),
+                        seconds=float(new_end_time[6:])
+                    )
+
+                if end_time.__sub__(start_time).total_seconds() > 0:
+                    for start_time_workday in self.xml_root.iter(f'{self.xml_ns}StartTimeWorkday'):
+                        start_time_workday.text = re.sub(
+                            pattern=self.time_format,
+                            repl=widgets_info["service_and_vehicle_hours_start"]["variable"].get(),
+                            string=self.vehicle_hours_start_datetime
+                        )
+
+                    for window_start in self.xml_root.iter(f'{self.xml_ns}Window'):
+                        window_start.set(
+                            'start',
+                            re.sub(
+                                pattern=self.time_format,
+                                repl=widgets_info["service_and_vehicle_hours_start"]["variable"].get(),
+                                string=self.vehicle_hours_start_datetime
+                            )
+                        )
+                else:
+                    messagebox.showerror("Wrong Value", "End Time is less then Start time.")
+            else:
+                messagebox.showerror("Wrong Value", "I found wrong value in Vehicle Hours Start Field. That's why I "
+                                                    "am skipped this part")
+
+        if not is_empty(text_variable=widgets_info["service_and_vehicle_hours_end"]["variable"]):
+            if re.fullmatch(self.time_format, widgets_info["service_and_vehicle_hours_end"]["variable"].get()):
+                new_end_time = widgets_info["service_and_vehicle_hours_end"]["variable"].get()
+                end_time = timedelta(
+                    hours=float(new_end_time[0:2]),
+                    minutes=float(new_end_time[3:5]),
+                    seconds=float(new_end_time[6:])
+                )
+
+                if is_empty(text_variable=widgets_info["service_and_vehicle_hours_end"]["variable"]):
+                    start_time = timedelta(
+                        hours=float(self.vehicle_hours_start_datetime[-8:-6]),
+                        minutes=float(self.vehicle_hours_start_datetime[-5:-3]),
+                        seconds=float(self.vehicle_hours_start_datetime[-2:])
+                    )
+
+                else:
+                    new_start_time = widgets_info["service_and_vehicle_hours_start"]["variable"].get()
+                    start_time = timedelta(
+                        hours=float(new_start_time[0:2]),
+                        minutes=float(new_start_time[3:5]),
+                        seconds=float(new_start_time[6:])
+                    )
+
+                if end_time.__sub__(start_time).total_seconds() > 0:
+                    for end_time_workday in self.xml_root.iter(f'{self.xml_ns}EndTimeWorkday'):
+                        end_time_workday.text = re.sub(
+                            pattern=self.time_format,
+                            repl=widgets_info["service_and_vehicle_hours_end"]["variable"].get(),
+                            string=self.vehicle_hours_end_datetime
+                        )
+
+                    for window_end in self.xml_root.iter(f'{self.xml_ns}Window'):
+                        window_end.set(
+                            'end',
+                            re.sub(
+                                pattern=self.time_format,
+                                repl=widgets_info["service_and_vehicle_hours_end"]["variable"].get(),
+                                string=self.vehicle_hours_end_datetime
+                            )
+                        )
+                else:
+                    messagebox.showerror("Wrong Value", "End Time is less then Start time.")
+            else:
+                messagebox.showerror("Wrong Value", "I found wrong value in Vehicle Hours Start Field. That's why I "
+                                                    "am skipped this part")
+
+        if not is_empty(widgets_info["service_time"]["variable"]):
+            for duration in self.xml_root.iter(f'{self.xml_ns}Duration'):
+                duration.text = re.sub(
+                    pattern=r'[0-9]+',
+                    repl=widgets_info["service_time"]["variable"].get(),
+                    string=duration.text
+                )
+
+        if not is_empty(text_variable=widgets_info['departure_location_longitude']["variable"]):
+            for vehicle in self.xml_root.iter(f'{self.xml_ns}Vehicle'):
+                vehicle.find(f'./{self.xml_ns}Location/{self.xml_ns}Coord').set(
+                    'x', widgets_info['departure_location_longitude']["variable"].get()
+                )
+
+        if not is_empty(text_variable=widgets_info['departure_location_latitude']["variable"]):
+            for vehicle in self.xml_root.iter(f'{self.xml_ns}Vehicle'):
+                vehicle.find(f'./{self.xml_ns}Location/{self.xml_ns}Coord').set(
+                    'y', widgets_info['departure_location_latitude']["variable"].get()
+                )
+
+        if not is_empty(text_variable=widgets_info["arrival_location_longitude"]["variable"]):
+            for vehicle in self.xml_root.iter(f'{self.xml_ns}Vehicle'):
+                vehicle.find(f'./{self.xml_ns}EndLocation/{self.xml_ns}Coord').set(
+                    'x', widgets_info["arrival_location_longitude"]["variable"].get()
+                )
+
+        if not is_empty(text_variable=widgets_info["arrival_location_latitude"]["variable"]):
+            for vehicle in self.xml_root.iter(f'{self.xml_ns}Vehicle'):
+                vehicle.find(f'./{self.xml_ns}EndLocation/{self.xml_ns}Coord').set(
+                    'y', widgets_info["arrival_location_latitude"]["variable"].get()
+                )
+
+        if self.to_departure_location_check_btn_status.get().__eq__(0):
+            for return_base in self.xml_root.iter(f'{self.xml_ns}ReturnBase'):
+                return_base.text = 'N'
+
+        if self.to_departure_location_check_btn_status.get().__eq__(1):
+            for return_base in self.xml_root.iter(f'{self.xml_ns}ReturnBase'):
+                return_base.text = 'Y'
+
+        if not is_empty(text_variable=widgets_info["vehicle_autonomy"]["variable"]):
+            for max_daily_km in self.xml_root.iter(f'{self.xml_ns}MaxDailyKM'):
+                max_daily_km.text = widgets_info["vehicle_autonomy"]["variable"].get()
+
+        if not is_empty(text_variable=widgets_info['vehicle_cost_driver_daily_fixed']["variable"]):
+            for cost_fixed in self.xml_root.iter(f'{self.xml_ns}CostFixed'):
+                cost_fixed.text = widgets_info['vehicle_cost_driver_daily_fixed']["variable"].get()
+
+        if not is_empty(text_variable=widgets_info['vehicle_cost_driver_per_km']["variable"]):
+            for cost_km in self.xml_root.iter(f'{self.xml_ns}CostKm'):
+                cost_km.text = widgets_info['vehicle_cost_driver_per_km']["variable"].get()
+
+        if not is_empty(text_variable=widgets_info['vehicle_cost_driver_hourly']["variable"]):
+            for cost_hour in self.xml_root.iter(f'{self.xml_ns}CostHour'):
+                cost_hour.text = widgets_info['vehicle_cost_driver_hourly']["variable"].get()
+
+        if not is_empty(text_variable=widgets_info['vehicle_cost_driver_overtime']["variable"]):
+            for cost_overtime in self.xml_root.iter(f'{self.xml_ns}CostOvertime'):
+                cost_overtime.text = widgets_info['vehicle_cost_driver_overtime']["variable"].get()
+
+        if not is_empty(text_variable=widgets_info['vehicle_capacity_parameters_units']["variable"]):
+            for capacity_units in self.xml_root.iter(f'{self.xml_ns}CapacityUnits'):
+                capacity_units.text = widgets_info['vehicle_capacity_parameters_units']["variable"].get()
+
+        if not is_empty(text_variable=widgets_info['vehicle_capacity_parameters_payloads']["variable"]):
+            for capacity_payloads in self.xml_root.iter(f'{self.xml_ns}CapacityKg'):
+                capacity_payloads.text = widgets_info['vehicle_capacity_parameters_payloads']["variable"].get()
+
+        if not is_empty(text_variable=widgets_info['vehicle_capacity_parameters_volume']["variable"]):
+            for capacity_volume in self.xml_root.iter(f'{self.xml_ns}CapacityM3'):
+                capacity_volume.text = widgets_info['vehicle_capacity_parameters_volume']["variable"].get()
+
+        for parameter in self.xml_root.iter(f"{self.xml_ns}Parameter"):
+            param_name = parameter.find(f'{self.xml_ns}Name').text
+            if param_name == "Priority":
+                if not is_empty(text_variable=widgets_info["priority_weight"]["variable"]):
+                    parameter.find(f'./{self.xml_ns}Weight').text = widgets_info["priority_weight"]["variable"].get()
+                if not is_empty(text_variable=widgets_info["priority_factor"]["variable"]):
+                    parameter.find(f'./{self.xml_ns}Factor').text = widgets_info["priority_factor"]["variable"].get()
+
+            elif param_name == "Cost":
+                if not is_empty(text_variable=widgets_info["cost_weight"]["variable"]):
+                    parameter.find(f'./{self.xml_ns}Weight').text = widgets_info["cost_weight"]["variable"].get()
+                if not is_empty(text_variable=widgets_info["cost_factor"]["variable"]):
+                    parameter.find(f'./{self.xml_ns}Factor').text = widgets_info["cost_factor"]["variable"].get()
+
+            elif param_name == "Delay":
+                parameter.find(f'./{self.xml_ns}Mandatory').text = widgets_info["delay_mandatory"]["variable"].get()
+                if not is_empty(text_variable=widgets_info["delay_weight"]["variable"]):
+                    parameter.find(f'./{self.xml_ns}Weight').text = widgets_info["delay_weight"]["variable"].get()
+                if not is_empty(text_variable=widgets_info["delay_factor"]["variable"]):
+                    parameter.find(f'./{self.xml_ns}Factor').text = widgets_info["delay_factor"]["variable"].get()
+
+            elif param_name == "AvoidOvertime":
+                parameter.find(f'./{self.xml_ns}Value').text = widgets_info["avoid_overtime"]["variable"].get()
+
+            elif param_name == "AvoidExtraDriving":
+                parameter.find(f'./{self.xml_ns}Value').text = widgets_info["avoid_extra_driving"]["variable"].get()
+
+            elif param_name == "Allocate":
+                parameter.find(f'./{self.xml_ns}Mandatory').text = widgets_info["allocate_mandatory"]["variable"].get()
+
+                if not is_empty(text_variable=widgets_info["allocate_weight"]["variable"]):
+                    parameter.find(f'./{self.xml_ns}Weight').text = widgets_info["allocate_weight"]["variable"].get()
+                if not is_empty(text_variable=widgets_info["allocate_factor"]["variable"]):
+                    parameter.find(f'./{self.xml_ns}Factor').text = widgets_info["allocate_factor"]["variable"].get()
+
+            elif param_name == "Iterations":
+                if not is_empty(text_variable=widgets_info["iterations"]["variable"]):
+                    parameter.find(f'./{self.xml_ns}Value').text = widgets_info["iterations"]["variable"].get()
+
+            elif param_name == "RouteWeight":
+                parameter.find(f'./{self.xml_ns}Value').text = widgets_info["route_weight"]["variable"].get()
+
+            elif param_name == "MaxServiceDelay":
+                if not is_empty(text_variable=widgets_info["max_service_delay"]["variable"]):
+                    parameter.find(f'./{self.xml_ns}Value').text = widgets_info["max_service_delay"]["variable"].get()
+
+            elif param_name == "MaxDiffAllocate":
+                if not is_empty(text_variable=widgets_info["max_diff_allocate"]["variable"]):
+                    parameter.find(f'./{self.xml_ns}Value').text = widgets_info["max_diff_allocate"]["variable"].get()
+
+            elif param_name == "OvertimeUnits":
+                if not is_empty(text_variable=widgets_info["overtime_units"]["variable"]):
+                    parameter.find(f'./{self.xml_ns}Value').text = widgets_info["overtime_units"]["variable"].get()
+
+            elif param_name == "LimitOvertimeBefore":
+                if not is_empty(text_variable=widgets_info["limit_overtime_before"]["variable"]):
+                    parameter.find(f'./{self.xml_ns}Value').text = widgets_info["limit_overtime_before"]["variable"].get()
+
+            elif param_name == "LimitOvertimeAfter":
+                if not is_empty(text_variable=widgets_info["limit_overtime_after"]["variable"]):
+                    parameter.find(f'./{self.xml_ns}Value').text = widgets_info["limit_overtime_after"]["variable"].get()
+
+            elif param_name == "MinHoursBreak":
+                if not is_empty(text_variable=widgets_info["min_hours_break"]["variable"]):
+                    parameter.find(f'./{self.xml_ns}Value').text = widgets_info["min_hours_break"]["variable"].get()
+
+            elif param_name == "AllocateMode":
+                parameter.find(f'./{self.xml_ns}Value').text = widgets_info["allocate_mode"]["variable"].get()
+
+            elif param_name == "GroupServices":
+                parameter.find(f'./{self.xml_ns}Mandatory').text = widgets_info["group_service_mandatory"]["variable"].get()
+
+                if not is_empty(text_variable=widgets_info["group_service_weight"]["variable"]):
+                    parameter.find(f'./{self.xml_ns}Weight').text = widgets_info["group_service_weight"]["variable"].get()
+                if not is_empty(text_variable=widgets_info["group_service_factor"]["variable"]):
+                    parameter.find(f'./{self.xml_ns}Factor').text = widgets_info["group_service_factor"]["variable"].get()
+
+            elif param_name == "GroupServicesMaxMeters":
+                if not is_empty(text_variable=widgets_info["group_service_max_meter"]["variable"]):
+                    parameter.find(f'./{self.xml_ns}Value').text = widgets_info["group_service_max_meter"]["variable"].get()
+
+            elif param_name == "RestrictToServiceWindow":
+                parameter.find(f'./{self.xml_ns}Value').text = widgets_info["restrict_service_window"]["variable"].get()
+
+            elif param_name == "TimeFactor":
+                if not is_empty(text_variable=widgets_info["time_factor"]["variable"]):
+                    parameter.find(f'./{self.xml_ns}Value').text = widgets_info["time_factor"]["variable"].get()
+
+            elif param_name == "AllVehicles":
+                parameter.find(f'./{self.xml_ns}Value').text = widgets_info["all_vehicles"]["variable"].get()
+
+            else:
+                pass
+
+        self.xml_tree.write(f'{self.new_request_id}.xml', xml_declaration=True)
+        messagebox.showinfo(title="Successful", message=f"Successfully created {self.new_request_id}.xml file.")
