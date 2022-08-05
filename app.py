@@ -18,6 +18,7 @@ from functions import set_config
 from functions import err_message_dialog
 from xml.etree import ElementTree
 from functions import clear_edit_text
+from functions import check_button_function
 
 
 class Ui:
@@ -57,7 +58,11 @@ class Ui:
             variable_name=self.to_departure_location_check_btn_status,
             row=10,
             column=1,
-            command=None
+            command=lambda: check_button_function(
+                self.to_departure_location_check_btn_status,
+                self.app["arrival_location_longitude"][1],
+                self.app["arrival_location_latitude"][1]
+            )
         )
 
         set_config(
