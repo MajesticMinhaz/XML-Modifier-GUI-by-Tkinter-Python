@@ -54,9 +54,9 @@ def err_message_dialog(field_name: str = None, extra: bool = False, custom_msg: 
         messagebox.showwarning("Wrong !", "Something went wrong !")
 
 
-def edit_text_validator(condition: str, variable: StringVar, err_msg: str) -> bool:
-    if not re.fullmatch(pattern=condition, string=variable.get()):
-        clear_edit_text(text_variable=variable)
+def edit_text_validator(condition: str, variable: StringVar, edit_text: Entry, err_msg: str) -> bool:
+    if len(variable.get()) > 0 and not re.fullmatch(pattern=condition, string=variable.get()):
+        edit_text.delete(0, "end")
         err_message_dialog(extra=True, custom_msg=err_msg)
         return False
     else:
