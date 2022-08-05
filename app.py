@@ -9,6 +9,7 @@
                                 Date        04-08-2022 at 22:40:58 (GMT + 6)
 ===========================================================================================================
 """
+import re
 import os
 from widgets_info import widgets_info
 from widgets import Widgets
@@ -16,6 +17,7 @@ from tkinter import IntVar
 from functions import set_config
 from functions import err_message_dialog
 from xml.etree import ElementTree
+from functions import clear_edit_text
 
 
 class Ui:
