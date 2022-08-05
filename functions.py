@@ -65,3 +65,8 @@ def edit_text_validator(condition: str, variable: StringVar, err_msg: str) -> bo
 
 def set_config(field_name: Entry, config: Literal["normal", "disabled", "readonly"]) -> None:
     return field_name.config(state=config)
+
+
+def is_empty(text_variable: StringVar) -> bool:
+    return True if len(text_variable.get()).__eq__(0) else False
+
