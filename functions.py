@@ -15,6 +15,7 @@ from tkinter import Entry
 from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import StringVar
+from typing import Literal
 
 
 def clear_edit_text(field_name: Entry) -> None:
@@ -60,3 +61,7 @@ def edit_text_validator(condition: str, variable: StringVar, edit_text: Entry, e
         return False
     else:
         return True
+
+
+def set_config(field_name: Entry, config: Literal["normal", "disabled", "readonly"]) -> None:
+    return field_name.config(state=config)
