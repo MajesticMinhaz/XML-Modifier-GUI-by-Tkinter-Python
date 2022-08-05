@@ -20,7 +20,7 @@ from tkinter import Y
 from tkinter import Frame
 from tkinter.ttk import Scrollbar
 from widgets import Widgets
-from ui import Ui
+from app import Ui
 
 if __name__ == '__main__':
     root = Tk()
