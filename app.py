@@ -98,7 +98,7 @@ class Ui:
 
                     self.vehicle_hours_start_datetime = self.first_vehicle.find(f'./{self.xml_ns}StartTimeWorkday').text
                     self.vehicle_hours_end_datetime = self.first_vehicle.find(f'./{self.xml_ns}EndTimeWorkday').text
-                    # self.exist_data_input()
+                    self.exist_data_input()
                 else:
                     err_message_dialog(extra=True, custom_msg="Please Select Correct XML File.")
 
