@@ -33,7 +33,7 @@ class Ui:
                 self.app[key] = self.master.edit_text(manager=value)
 
         self.to_departure_location_check_btn = self.master.check_button(
-            check_btn_text="Arrive to departure location",
+            check_btn_text="Do Vehicles arrive to departure location",
             variable_name=self.to_departure_location_check_btn_status,
             row=10,
             column=1,
