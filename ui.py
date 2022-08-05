@@ -12,6 +12,7 @@
 from widgets_info import widgets_info
 from widgets import Widgets
 from tkinter import IntVar
+from functions import set_config
 
 
 class Ui:
@@ -38,6 +39,15 @@ class Ui:
             row=10,
             column=1,
             command=None
+        )
+
+        set_config(
+            field_name=self.app["arrival_location_longitude"][1],
+            config="disabled"
+        )
+        set_config(
+            field_name=self.app["arrival_location_latitude"][1],
+            config="disabled"
         )
 
         self.read_files_btn = self.master.button(
