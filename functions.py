@@ -18,21 +18,21 @@ from tkinter import StringVar
 from typing import Literal
 
 
-def clear_edit_text(field_name: Entry) -> None:
-    return field_name.delete(first=0, last="end")
+def clear_edit_text(text_variable: StringVar) -> None:
+    text_variable.set("")
 
 
-def browse_file(edit_text: Entry, *field: str):
-    clear_edit_text(field_name=edit_text)
+def browse_file(text_variable: StringVar, *field: str):
+    clear_edit_text(text_variable=text_variable)
 
     file_path = filedialog.askopenfilename(
         title=field[0],
         filetypes=[(field[1], field[2])]
     )
     if field[3] == "True":
-        edit_text.insert(0, os.path.dirname(file_path))
+        text_variable.set(os.path.dirname(file_path))
     else:
-        edit_text.insert(0, file_path)
+        text_variable.set(file_path)
 
 
 def dropdown_status(dropdown_variable: StringVar) -> str:
@@ -54,9 +54,9 @@ def err_message_dialog(field_name: str = None, extra: bool = False, custom_msg: 
         messagebox.showwarning("Wrong !", "Something went wrong !")
 
 
-def edit_text_validator(condition: str, variable: StringVar, edit_text: Entry, err_msg: str) -> bool:
+def edit_text_validator(condition: str, variable: StringVar, err_msg: str) -> bool:
     if not re.fullmatch(pattern=condition, string=variable.get()):
-        clear_edit_text(field_name=edit_text)
+        clear_edit_text(text_variable=variable)
         err_message_dialog(extra=True, custom_msg=err_msg)
         return False
     else:
