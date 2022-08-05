@@ -40,5 +40,5 @@ if __name__ == '__main__':
     widgets = Widgets(master=my_frame)
     canvas.create_window((0, 0), window=my_frame, anchor="nw")
     ui = Ui(master=widgets)
-    ui.edit_text_packer()
+    ui.widget_packer()
     root.mainloop()
