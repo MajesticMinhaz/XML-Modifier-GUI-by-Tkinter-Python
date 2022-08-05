@@ -95,6 +95,7 @@ class Widgets(Entry, Label, Button):
                 validatecommand=lambda: edit_text_validator(
                     condition=manager.get("condition"),
                     variable=manager.get("variable"),
+                    edit_text=edit_text,
                     err_msg=manager.get("error_msg")
                 )
             )
@@ -135,6 +136,7 @@ class Widgets(Entry, Label, Button):
                 validatecommand=lambda: edit_text_validator(
                     condition=manager.get("condition"),
                     variable=manager.get("variable"),
+                    edit_text=edit_text_new,
                     err_msg=manager.get("error_msg")
                 )
             )
