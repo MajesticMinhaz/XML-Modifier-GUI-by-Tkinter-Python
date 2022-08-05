@@ -41,7 +41,7 @@ widgets_info = {
         "is_file_selector": False,
         "number_of_input_field": 1,
         "is_dropdown": False,
-        "condition": r".*-App",
+        "condition": r".*",
         "error_msg": "It should be empty, this field will filled up automatically.",
         "variable": StringVar,
     },
