@@ -124,6 +124,8 @@ class Widgets(Entry, Label, Button):
                 background="gray20",
                 fg="#00eded",
                 cursor="arrow",
+                disabledbackground="#6e6e6e",
+                disabledforeground="#bfc9ff",
                 textvariable=manager.get("variable"),
                 validate="focusout",
                 validatecommand=lambda: edit_text_validator(
