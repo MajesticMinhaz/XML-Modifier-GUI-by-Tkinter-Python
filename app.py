@@ -1,6 +1,6 @@
 """
 ===========================================================================================================
-                                File        ui.py (Entry point)
+                                File        app.py (Entry point)
                                 Author      Md. Minhaz
                                 Email       mdm047767@gmail.com
                                 Hire Me     https://pph.me/mdminhaz2003/
@@ -9,14 +9,17 @@
                                 Date        04-08-2022 at 22:40:58 (GMT + 6)
 ===========================================================================================================
 """
+import os
 from widgets_info import widgets_info
 from widgets import Widgets
 from tkinter import IntVar
 from functions import set_config
+from functions import err_message_dialog
+from xml.etree import ElementTree
 
 
 class Ui:
-    def __init__(self, master: Widgets):
+    def __init__(self, master: Widgets = None):
         self.master = master
 
         self.to_departure_location_check_btn = None
@@ -27,6 +30,19 @@ class Ui:
         self.submit_btn = None
 
         self.app = {}
+
+        self.xml_tree = None
+        self.xml_root = None
+
+        self.xml_ns = r'{https://lastmile.team}'
+        self.request = None
+        self.request_id = None
+        self.first_vehicle = None
+        self.first_service = None
+        self.settings = None
+
+        self.vehicle_hours_start_datetime = None
+        self.vehicle_hours_end_datetime = None
 
     def edit_text_packer(self) -> None:
         for key, value in zip(widgets_info.keys(), widgets_info.values()):
@@ -54,7 +70,7 @@ class Ui:
             btn_text="Read Files",
             row=2,
             column=2,
-            command=None
+            command=self.read_xml
         )
         self.submit_btn = self.master.button(
             btn_text="Submit",
@@ -62,3 +78,29 @@ class Ui:
             column=1,
             command=None
         )
+
+    def read_xml(self):
+        if os.path.exists(widgets_info.get("xml_file_path")["variable"].get()):
+            try:
+                self.xml_tree = ElementTree.parse(widgets_info.get("xml_file_path")["variable"].get())
+                self.xml_root = self.xml_tree.getroot()
+
+                # Exist Data Input
+                if self.xml_root.tag.lower() == f"{self.xml_ns}requests":
+                    self.request = self.xml_root.find(f"./{self.xml_ns}Request")
+                    self.request_id = self.request.get("requestid")
+                    self.first_vehicle = self.xml_root.find(f'.//{self.xml_ns}Vehicles/{self.xml_ns}Vehicle')
+                    self.first_service = self.xml_root.find(f'.//{self.xml_ns}Services/{self.xml_ns}Service')
+                    self.settings = self.xml_root.find(f'.//{self.xml_ns}Settings')
+
+                    self.vehicle_hours_start_datetime = self.first_vehicle.find(f'./{self.xml_ns}StartTimeWorkday').text
+                    self.vehicle_hours_end_datetime = self.first_vehicle.find(f'./{self.xml_ns}EndTimeWorkday').text
+                    # self.exist_data_input()
+                else:
+                    err_message_dialog(extra=True, custom_msg="Please Select Correct XML File.")
+
+            except Exception as e:
+                err_message_dialog(extra=True, custom_msg="Please Select Correct XML File.")
+                print(e)
+        else:
+            err_message_dialog(extra=True, custom_msg="Select your valid XML file from file store.")
