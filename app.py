@@ -43,6 +43,7 @@ class Ui:
         self.first_service = None
         self.settings = None
 
+        self.time_format_matcher = re.compile(r'([0-2])([0-9]):([0-5])([0-9]):([0-5])([0-9])$')
         self.vehicle_hours_start_datetime = None
         self.vehicle_hours_end_datetime = None
 
