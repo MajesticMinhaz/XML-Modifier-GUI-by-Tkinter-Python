@@ -107,3 +107,151 @@ class Ui:
                 print(e)
         else:
             err_message_dialog(extra=True, custom_msg="Select your valid XML file from file store.")
+
+    def exist_data_input(self):
+        all_data_except_settings = [
+            {"key": "request_id", "value": self.request_id},
+            {
+                "key": "service_and_vehicle_hours_start",
+                "value": re.search(self.time_format_matcher, self.vehicle_hours_start_datetime).group()
+            },
+            {
+                "key": "service_and_vehicle_hours_end",
+                "value": re.search(self.time_format_matcher, self.vehicle_hours_end_datetime).group()
+            },
+            {
+                "key": "service_time",
+                "value": re.search(r'[0-9]+', self.first_service.find(f'./{self.xml_ns}Duration').text).group()
+            },
+            {
+                "key": "departure_location_longitude",
+                "value": self.first_vehicle.find(f'./{self.xml_ns}Location/{self.xml_ns}Coord').get("x")
+            },
+            {
+                "key": "departure_location_latitude",
+                "value": self.first_vehicle.find(f'./{self.xml_ns}Location/{self.xml_ns}Coord').get("y")
+            },
+            {
+                "key": "arrival_location_longitude",
+                "value": self.first_vehicle.find(f'./{self.xml_ns}EndLocation/{self.xml_ns}Coord').get("x")
+            },
+            {
+                "key": "arrival_location_latitude",
+                "value": self.first_vehicle.find(f'./{self.xml_ns}EndLocation/{self.xml_ns}Coord').get("y")
+            },
+            {
+                "key": "vehicle_autonomy",
+                "value": self.first_vehicle.find(f'./{self.xml_ns}MaxDailyKM').text
+            },
+            {
+                "key": "vehicle_cost_driver_daily_fixed",
+                "value": self.first_vehicle.find(f'./{self.xml_ns}CostFixed').text
+            },
+            {
+                "key": "vehicle_cost_driver_per_km",
+                "value": self.first_vehicle.find(f'./{self.xml_ns}CostKm').text
+            },
+            {
+                "key": "vehicle_cost_driver_hourly",
+                "value": self.first_vehicle.find(f'./{self.xml_ns}CostHour').text
+            },
+            {
+                "key": "vehicle_cost_driver_overtime",
+                "value": self.first_vehicle.find(f'./{self.xml_ns}CostOvertime').text
+            },
+            {
+                "key": "vehicle_capacity_parameters_units",
+                "value": self.first_vehicle.find(f'./{self.xml_ns}CapacityUnits').text
+            },
+            {
+                "key": "vehicle_capacity_parameters_payloads",
+                "value": self.first_vehicle.find(f'./{self.xml_ns}CapacityKg').text
+            },
+            {
+                "key": "vehicle_capacity_parameters_volume",
+                "value": self.first_vehicle.find(f'./{self.xml_ns}CapacityM3').text
+            }
+        ]
+
+        for item in all_data_except_settings:
+            self.data_input_helper(key=item.get("key"), data=item.get("value"))
+
+        for parameter in self.settings.iter(f"{self.xml_ns}Parameter"):
+            param_name = parameter.find(f"{self.xml_ns}Name").text
+
+            if param_name == "Priority":
+                self.data_input_helper("priority_weight", parameter.find(f'./{self.xml_ns}Weight').text)
+                self.data_input_helper("priority_factor", parameter.find(f'./{self.xml_ns}Factor').text)
+            elif param_name == "Cost":
+                self.data_input_helper("cost_weight", parameter.find(f'./{self.xml_ns}Weight').text)
+                self.data_input_helper("cost_factor", parameter.find(f'./{self.xml_ns}Factor').text)
+            elif param_name == "Delay":
+                self.data_input_helper("delay_mandatory", parameter.find(f'./{self.xml_ns}Mandatory').text)
+                self.data_input_helper("delay_weight", parameter.find(f'./{self.xml_ns}Weight').text)
+                self.data_input_helper("delay_factor", parameter.find(f'./{self.xml_ns}Factor').text)
+            elif param_name == "AvoidOvertime":
+                self.data_input_helper("avoid_overtime", parameter.find(f'./{self.xml_ns}Value').text)
+            elif param_name == "AvoidExtraDriving":
+                self.data_input_helper("avoid_extra_driving", parameter.find(f'./{self.xml_ns}Value').text)
+            elif param_name == "Allocate":
+                self.data_input_helper("allocate_mandatory", parameter.find(f'./{self.xml_ns}Mandatory').text)
+                self.data_input_helper("allocate_weight", parameter.find(f'./{self.xml_ns}Weight').text)
+                self.data_input_helper("allocate_factor", parameter.find(f'./{self.xml_ns}Factor').text)
+            elif param_name == "Iterations":
+                self.data_input_helper("iterations", parameter.find(f'./{self.xml_ns}Value').text)
+            elif param_name == "RouteWeight":
+                self.data_input_helper("route_weight", parameter.find(f'./{self.xml_ns}Value').text)
+            elif param_name == "MaxServiceDelay":
+                self.data_input_helper("max_service_delay", parameter.find(f'./{self.xml_ns}Value').text)
+            elif param_name == "MaxDiffAllocate":
+                self.data_input_helper("max_diff_allocate", parameter.find(f'./{self.xml_ns}Value').text)
+            elif param_name == "OvertimeUnits":
+                self.data_input_helper("overtime_units", parameter.find(f'./{self.xml_ns}Value').text)
+            elif param_name == "LimitOvertimeBefore":
+                self.data_input_helper("limit_overtime_before", parameter.find(f'./{self.xml_ns}Value').text)
+            elif param_name == "LimitOvertimeAfter":
+                self.data_input_helper("limit_overtime_after", parameter.find(f'./{self.xml_ns}Value').text)
+            elif param_name == "MinHoursBreak":
+                self.data_input_helper("min_hours_break", parameter.find(f'./{self.xml_ns}Value').text)
+            elif param_name == "AllocateMode":
+                self.data_input_helper("allocate_mode", parameter.find(f'./{self.xml_ns}Value').text)
+            elif param_name == "GroupServices":
+                self.data_input_helper("group_service_mandatory", parameter.find(f'./{self.xml_ns}Mandatory').text)
+                self.data_input_helper("group_service_weight", parameter.find(f'./{self.xml_ns}Weight').text)
+                self.data_input_helper("group_service_factor", parameter.find(f'./{self.xml_ns}Factor').text)
+            elif param_name == "GroupServicesMaxMeters":
+                self.data_input_helper("group_service_max_meter", parameter.find(f'./{self.xml_ns}Value').text)
+            elif param_name == "RestrictToServiceWindow":
+                self.data_input_helper("restrict_service_window", parameter.find(f'./{self.xml_ns}Value').text)
+            elif param_name == "TimeFactor":
+                self.data_input_helper("time_factor", parameter.find(f'./{self.xml_ns}Value').text)
+            elif param_name == "AllVehicles":
+                self.data_input_helper("all_vehicles", parameter.find(f'./{self.xml_ns}Value').text)
+            else:
+                pass
+
+    def data_input_helper(self, key: str, data: str):
+        if widgets_info.get(key)["number_of_input_field"] == 1:
+            clear_edit_text(text_variable=widgets_info.get(key)["variable"])
+            widgets_info.get(key)["variable"].set(data)
+            set_config(
+                field_name=self.app.get(key),
+                config="disabled"
+            )
+        elif widgets_info.get(key)["number_of_input_field"] == 2 and widgets_info.get(key)["is_dropdown"]:
+            clear_edit_text(text_variable=widgets_info.get(key)["actual_value"])
+            widgets_info.get(key)["actual_value"].set(data)
+            set_config(
+                field_name=self.app.get(key)[0],
+                config="disabled"
+            )
+        elif widgets_info.get(key)["number_of_input_field"] == 2 and not widgets_info.get(key)["is_dropdown"]:
+            clear_edit_text(text_variable=widgets_info.get(key)["actual_value"])
+            clear_edit_text(text_variable=widgets_info.get(key)["variable"])
+            widgets_info.get(key)["actual_value"].set(data)
+            set_config(
+                field_name=self.app.get(key)[0],
+                config="disabled"
+            )
+        else:
+            pass
