@@ -89,6 +89,8 @@ class Widgets(Entry, Label, Button):
                 fg="#85e2ff",
                 cursor="arrow",
                 textvariable=manager.get("variable"),
+                disabledbackground="#6e6e6e",
+                disabledforeground="#bfc9ff",
                 validate="focusout",
                 validatecommand=lambda: edit_text_validator(
                     condition=manager.get("condition"),
@@ -168,8 +170,8 @@ class Widgets(Entry, Label, Button):
                 foreground="black"
             )
 
-            edit_text_actual.grid(row=manager.get("row"), column=1, columnspan=1)
-            dropdown.grid(row=manager.get("row"), column=2, columnspan=1)
+            edit_text_actual.grid(row=manager.get("row"), column=1, columnspan=1, pady=5)
+            dropdown.grid(row=manager.get("row"), column=2, columnspan=1, pady=5)
 
             return edit_text_actual, dropdown
         else:
