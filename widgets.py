@@ -75,7 +75,7 @@ class Widgets(Entry, Label, Button):
                 sequence='<Button-1>',
                 func=lambda a=manager.get("placeholder"), b=manager.get("field_name"), c=manager.get('file_expression'), d=manager.get("base_path"):
                 browse_file(
-                    edit_text, a, b, c, str(d)
+                    manager.get("variable"), a, b, c, str(d)
                 )
             )
             return edit_text
@@ -93,7 +93,6 @@ class Widgets(Entry, Label, Button):
                 validatecommand=lambda: edit_text_validator(
                     condition=manager.get("condition"),
                     variable=manager.get("variable"),
-                    edit_text=edit_text,
                     err_msg=manager.get("error_msg")
                 )
             )
@@ -106,6 +105,8 @@ class Widgets(Entry, Label, Button):
             return edit_text
 
         elif manager.get("number_of_input_field") == 2 and not manager.get("is_dropdown"):
+            manager["actual_value"] = StringVar()
+
             edit_text_actual = Entry(
                 master=self.master,
                 width=int(width / 2),
@@ -113,6 +114,7 @@ class Widgets(Entry, Label, Button):
                 cursor="none",
                 borderwidth=0,
                 background="gray20",
+                textvariable=manager.get("actual_value"),
                 disabledbackground="#6e6e6e",
                 disabledforeground="#bfc9ff"
             )
@@ -131,7 +133,6 @@ class Widgets(Entry, Label, Button):
                 validatecommand=lambda: edit_text_validator(
                     condition=manager.get("condition"),
                     variable=manager.get("variable"),
-                    edit_text=edit_text_new,
                     err_msg=manager.get("error_msg")
                 )
             )
@@ -142,6 +143,7 @@ class Widgets(Entry, Label, Button):
 
         elif manager.get("number_of_input_field") == 2 and manager.get("is_dropdown"):
             manager["variable"].set(manager.get("options")[0])
+            manager["actual_value"] = StringVar()
 
             edit_text_actual = Entry(
                 master=self.master,
@@ -149,6 +151,7 @@ class Widgets(Entry, Label, Button):
                 show=show,
                 cursor="none",
                 borderwidth=0,
+                textvariable=manager.get("actual_value"),
                 background="gray20",
                 disabledbackground="#6e6e6e",
                 disabledforeground="#bfc9ff"
