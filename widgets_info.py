@@ -91,8 +91,8 @@ widgets_info = {
         "is_file_selector": False,
         "number_of_input_field": 2,
         "is_dropdown": False,
-        "condition": r"^(-?[0-9]+[.][0-9][0-9])$",
-        "error_msg": "Departure Location (Longitude) should be two decimal value, only (.) acceptable",
+        "condition": r"^(-?[0-9]+[.][0-9][0-9][0-9][0-9][0-9][0-9])$",
+        "error_msg": "Departure Location (Longitude) should be six decimal value, only (.) acceptable",
         "variable": StringVar,
     },
     "departure_location_latitude": {
@@ -101,8 +101,8 @@ widgets_info = {
         "is_file_selector": False,
         "number_of_input_field": 2,
         "is_dropdown": False,
-        "condition": r"^(-?[0-9]+[.][0-9][0-9])$",
-        "error_msg": "Departure Location (Latitude) should be two decimal value, only (.) acceptable",
+        "condition": r"^(-?[0-9]+[.][0-9][0-9][0-9][0-9][0-9][0-9])$",
+        "error_msg": "Departure Location (Latitude) should be six decimal value, only (.) acceptable",
         "variable": StringVar,
     },
     "arrival_location_longitude": {
