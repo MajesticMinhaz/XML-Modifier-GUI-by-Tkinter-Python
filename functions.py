@@ -42,7 +42,7 @@ def dropdown_status(dropdown_variable: StringVar) -> str:
 
 def dropdown_disabled(dropdown):
     dropdown.configure(
-        state="disabled"
+        # state="disabled"
     )
 
 
