@@ -211,6 +211,11 @@ class Ui:
             {
                 "key": "vehicle_capacity_parameters_volume",
                 "value": self.first_vehicle.find(f'./{self.xml_ns}CapacityM3').text
+            },
+            {
+                "key": "new_vehicles",
+                "value": f"{self.lmt_json_data.get('Category')}, {self.lmt_json_data.get('Fuel')}, "
+                         f"{self.lmt_json_data.get('Segment')}, {self.lmt_json_data.get('EuroStandard')}"
             }
         ]
 
