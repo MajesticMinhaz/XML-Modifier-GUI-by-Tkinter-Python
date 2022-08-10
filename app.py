@@ -594,52 +594,68 @@ class Ui:
     def create_folders(self):
         if not is_empty(text_variable=widgets_info.get('base_path')['variable']):
             if '_templates' in os.listdir(widgets_info.get("base_path")["variable"].get()):
-                base_folder = f"{widgets_info.get('base_path')['variable'].get()}-output"
-                sub_folder = f'YYYYMMDD_LL1_{widgets_info.get("twin_iteration_n")["variable"].get()}'
-                for directory_name in os.listdir(widgets_info.get("base_path")["variable"].get()):
-                    if re.fullmatch(pattern=r"^[0-9]+_LL1_baseline$", string=directory_name):
-                        sub_folder = re.sub(
-                            pattern=r"(baseline)$",
-                            repl=widgets_info.get("twin_iteration_n")["variable"].get(),
-                            string=directory_name
-                        )
-                    else:
-                        pass
-                sub_folder = os.path.join(base_folder, sub_folder)
-                request_folder = os.path.join(sub_folder, "Request")
-                new_xml_file_path = os.path.join(request_folder, f'{self.new_request_id}.xml')
+                _templates_path = os.path.join(widgets_info.get('base_path')['variable'].get(), "_templates")
+
+                output_base_path = re.search(
+                    pattern=r"^.*([0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]_.*/)",
+                    string=widgets_info.get("xml_file_path")["variable"].get()
+                ).group()[0:-9] + '-' + widgets_info.get("twin_iteration_n")["variable"].get()
+
+                output_request_path = os.path.join(output_base_path, "Request")
+                output_xml_file_path = os.path.join(output_request_path, f"{self.new_request_id}.xml")
+                output_lmt_copert_json_path = os.path.join(output_base_path, "lmt_LEAD_input_to_COPERT.json")
+                output_lmt_evco2_json_path = os.path.join(output_base_path, "lmt_LEAD_input_to_EVCO2.json")
 
                 try:
-                    os.mkdir(base_folder)
-                    os.mkdir(sub_folder)
-                    os.mkdir(request_folder)
+                    os.mkdir(output_base_path)
+                    os.mkdir(output_request_path)
                 except FileExistsError:
-                    shutil.rmtree(base_folder)
-                    os.mkdir(base_folder)
-                    os.mkdir(sub_folder)
-                    os.mkdir(request_folder)
+                    shutil.rmtree(output_base_path)
+                    os.mkdir(output_base_path)
+                    os.mkdir(output_request_path)
                 except OSError:
-                    shutil.rmtree(base_folder)
-                    os.mkdir(base_folder)
-                    os.mkdir(sub_folder)
-                    os.mkdir(request_folder)
-                self.xml_tree.write(new_xml_file_path, xml_declaration=True)
+                    shutil.rmtree(output_base_path)
+                    os.mkdir(output_base_path)
+                    os.mkdir(output_request_path)
 
-                source_directory = os.path.join(widgets_info.get('base_path')['variable'].get(), "_templates")
+                self.xml_tree.write(output_xml_file_path, xml_declaration=True)
 
-                for file_name in os.listdir(source_directory):
+                for file_name in os.listdir(_templates_path):
                     if file_name == "COPERT_vehicle_types.xlsx":
                         continue
                     else:
-                        source = os.path.join(source_directory, file_name)
-                        destination = os.path.join(sub_folder, file_name)
+                        source = os.path.join(_templates_path, file_name)
+                        destination = os.path.join(output_base_path, file_name)
 
                         if os.path.isfile(source):
                             shutil.copy(source, destination)
                         else:
                             pass
 
-                messagebox.showinfo(title="Successful", message=f"Successfully created {new_xml_file_path}.")
+                new_vehicle_values = widgets_info.get("new_vehicles")["variable"].get().split(sep=",")
+                new_vehicle_data = [
+                    {
+                        "ResponsePlanId": self.lmt_json_data.get("ResponsePlanId"),
+                        "Category": new_vehicle_values[0],
+                        "Fuel": new_vehicle_values[1],
+                        "Segment": new_vehicle_values[2],
+                        "EuroStandard": new_vehicle_values[3],
+                        "Stock": self.lmt_json_data.get("Stock"),
+                        "MeanActivity": self.lmt_json_data.get("MeanActivity")
+                    }
+                ]
+
+                if os.path.exists(output_lmt_evco2_json_path):
+                    with open(output_lmt_evco2_json_path, "w") as write_json:
+                        write_json.write(json.dumps(new_vehicle_data))
+                        write_json.close()
+                elif os.path.exists(output_lmt_copert_json_path):
+                    with open(output_lmt_copert_json_path, "w") as write_json:
+                        write_json.write(json.dumps(new_vehicle_data))
+                        write_json.close()
+                else:
+                    pass
+                messagebox.showinfo(title="Successful", message=f"Successfully created {output_xml_file_path}.")
             else:
                 messagebox.showerror("Wrong Directory", "You have selected a wrong directory as Base Path.")
         else:
