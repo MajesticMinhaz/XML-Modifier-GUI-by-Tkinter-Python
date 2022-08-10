@@ -193,17 +193,17 @@ class Widgets(Entry, Label, Button):
             activebackground="#1f3fed",
             activeforeground="#1fed71",
             anchor="center",
-            background="#1f3fed",
+            bg="#1f3fed",
             command=command,
             compound="none",
             cursor="arrow",
             default="disabled",
             disabledforeground="#9da39f",
-            foreground="#fcffff",
+            fg="#fcffff",
             height=1,
             width=width
         )
-        button.grid(row=row, column=column, columnspan=1, pady=5)
+        button.grid(row=row, column=column, columnspan=2, pady=5)
 
         return button
 
