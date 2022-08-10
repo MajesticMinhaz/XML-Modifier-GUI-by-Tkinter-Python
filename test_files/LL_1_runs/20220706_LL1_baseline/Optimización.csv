@@ -1,0 +1,30 @@
+Fecha 2022-07-06;ID 2293b23a-29b7-4bc2-b872-d98c30f44877
+
+Total
+Horas;Conducción;Espera;Servicio;Descanso;Km;Servicios;Sin planificar;Peso;Volumen;Vehículos adicionales
+51:32;13:37;00:00;34:55;3:0;491;426;7;;;0
+
+Detalle por vehículo
+Horas;Conducción;Espera;Servicio;Descanso;Km;Servicios;Salida;Llegada;ID vehículo;Identidad;Existente / Genérico;Total de Bultos;Total de Km; Total de M3
+8:19;2:14;00:00;5:35;00:30;76,3;67;09:00;17:19;ll1-Van1;604;E;161;1.500;6,8
+8:29;1:44;00:00;6:15;00:30;67,4;75;09:00;17:29;ll1-Van2;605;E;161;1.500;6,8
+8:27;1:52;00:00;6:05;00:30;71,5;73;09:00;17:27;ll1-Van3;606;E;161;1.500;6,8
+8:17;2:12;00:00;5:35;00:30;78,0;67;09:00;17:17;ll1-Van4;607;E;161;1.500;6,8
+8:28;2:03;00:00;5:55;00:30;72,9;71;09:00;17:28;ll1-Van5;608;E;161;1.500;6,8
+1:30;0:50;00:00;0:40;;46,7;8;09:00;10:30;ll1-Van6;609;E;161;1.500;6,8
+7:58;2:38;00:00;4:50;00:30;78,8;58;09:00;16:58;ll1-Van7;610;E;161;1.500;6,8
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
