@@ -42,7 +42,7 @@ class Widgets(Entry, Label, Button):
     def edit_text(
             self,
             manager: dict,
-            width: int = 50,
+            width: int = 96,
             show: str = None
     ):
         self.label(
@@ -184,7 +184,7 @@ class Widgets(Entry, Label, Button):
             btn_text: str,
             row: int,
             column: int,
-            width: int = 10,
+            width: int = 50,
             command=None
     ) -> Union[Button, Button]:
         button = Button(
