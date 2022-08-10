@@ -475,5 +475,19 @@ widgets_info = {
         "is_dropdown": True,
         "options": ["Y", "N"],
         "variable": StringVar
+    },
+    "new_vehicles": {
+        "field_name": "New Vehicles",
+        "row": 47,
+        "is_file_selector": False,
+        "number_of_input_field": 2,
+        "is_dropdown": True,
+        "options": [
+            "Light Commercial Vehicles, Diesel, N1-III, Euro 6 a/b/c",
+            "Passenger Cars, Petrol Hybrid, Large-SUV-Executive, Euro 6 a/b/c",
+            "Three-Wheeler, Electric, Cargo, Vehicle",
+            "Transit, Electric, Cargo, Vehicle"
+        ],
+        "variable": StringVar
     }
 }
