@@ -25,14 +25,18 @@ def clear_edit_text(text_variable: StringVar) -> None:
 
 def browse_file(text_variable: StringVar, *field: str):
     clear_edit_text(text_variable=text_variable)
-
-    file_path = filedialog.askopenfilename(
-        title=field[0],
-        filetypes=[(field[1], field[2])]
-    )
     if field[3] == "True":
-        text_variable.set(os.path.dirname(file_path))
+        file_path = filedialog.askopenfilename(
+            title=field[0],
+            filetypes=[(field[1], field[2])]
+        )
+        text_variable.set(file_path)
     else:
+        file_path = filedialog.askdirectory(
+            mustexist=True,
+            parent=None,
+            title=field[0]
+        )
         text_variable.set(file_path)
 
 
