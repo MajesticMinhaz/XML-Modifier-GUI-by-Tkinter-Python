@@ -73,7 +73,7 @@ class Widgets(Entry, Label, Button):
             edit_text.insert(index=0, string=f'Select your {manager.get("field_name")}')
             edit_text.bind(
                 sequence='<Button-1>',
-                func=lambda a=manager.get("placeholder"), b=manager.get("field_name"), c=manager.get('file_expression'), d=manager.get("base_path"):
+                func=lambda a=manager.get("placeholder"), b=manager.get("field_name"), c=manager.get('file_expression'), d=manager.get("file_path"):
                 browse_file(
                     manager.get("variable"), a, b, c, str(d)
                 )
