@@ -144,7 +144,7 @@ class Ui:
                     err_message_dialog(extra=True, custom_msg="Please Select Correct XML File.")
 
             except Exception as e:
-                err_message_dialog(extra=True, custom_msg="Please Select Correct XML File.")
+                err_message_dialog(extra=True, custom_msg="Please Select Correct Path.")
                 print(e)
         else:
             err_message_dialog(extra=True, custom_msg="Select your valid XML file from file store.")
