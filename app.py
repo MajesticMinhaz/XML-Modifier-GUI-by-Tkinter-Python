@@ -48,6 +48,7 @@ class Ui:
         self.first_vehicle = None
         self.first_service = None
         self.settings = None
+        self.lmt_json_data = None
 
         self.time_format = re.compile(r'([0-1][0-9]|(2[0-3])):([0-5][0-9]):([0-5][0-9])$')
         self.vehicle_hours_start_datetime = None
@@ -99,6 +100,34 @@ class Ui:
             try:
                 self.xml_tree = ElementTree.parse(widgets_info.get("xml_file_path")["variable"].get())
                 self.xml_root = self.xml_tree.getroot()
+
+                lmt_input_copert_path = os.path.join(
+                    re.search(
+                        pattern=r"^.*([0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]_.*/)",
+                        string=widgets_info.get("xml_file_path")["variable"].get()
+                    ).group()[0:-9],
+                    "lmt_LEAD_input_to_COPERT.json"
+                )
+                lmt_input_evco2_path = os.path.join(
+                    re.search(
+                        pattern=r"^.*([0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]_.*/)",
+                        string=widgets_info.get("xml_file_path")["variable"].get()
+                    ).group()[0:-9],
+                    "lmt_LEAD_input_to_EVCO2.json"
+                )
+
+                if os.path.exists(lmt_input_evco2_path):
+                    with open(lmt_input_evco2_path, "r") as read_json:
+                        self.lmt_json_data = read_json.read()
+                        self.lmt_json_data = json.loads(self.lmt_json_data)[0]
+                        read_json.close()
+                if os.path.exists(lmt_input_copert_path):
+                    with open(lmt_input_copert_path, "r") as read_json:
+                        self.lmt_json_data = read_json.read()
+                        self.lmt_json_data = json.loads(self.lmt_json_data)[0]
+                        read_json.close()
+                else:
+                    pass
 
                 # Exist Data Input
                 if self.xml_root.tag.lower() == f"{self.xml_ns}requests":
