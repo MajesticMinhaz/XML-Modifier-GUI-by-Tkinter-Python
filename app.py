@@ -540,11 +540,13 @@ class Ui:
 
             elif param_name == "LimitOvertimeBefore":
                 if not is_empty(text_variable=widgets_info["limit_overtime_before"]["variable"]):
-                    parameter.find(f'./{self.xml_ns}Value').text = widgets_info["limit_overtime_before"]["variable"].get()
+                    parameter.find(f'./{self.xml_ns}Value').text = widgets_info["limit_overtime_before"][
+                        "variable"].get()
 
             elif param_name == "LimitOvertimeAfter":
                 if not is_empty(text_variable=widgets_info["limit_overtime_after"]["variable"]):
-                    parameter.find(f'./{self.xml_ns}Value').text = widgets_info["limit_overtime_after"]["variable"].get()
+                    parameter.find(f'./{self.xml_ns}Value').text = widgets_info["limit_overtime_after"][
+                        "variable"].get()
 
             elif param_name == "MinHoursBreak":
                 if not is_empty(text_variable=widgets_info["min_hours_break"]["variable"]):
@@ -554,16 +556,20 @@ class Ui:
                 parameter.find(f'./{self.xml_ns}Value').text = widgets_info["allocate_mode"]["variable"].get()
 
             elif param_name == "GroupServices":
-                parameter.find(f'./{self.xml_ns}Mandatory').text = widgets_info["group_service_mandatory"]["variable"].get()
+                parameter.find(f'./{self.xml_ns}Mandatory').text = widgets_info["group_service_mandatory"][
+                    "variable"].get()
 
                 if not is_empty(text_variable=widgets_info["group_service_weight"]["variable"]):
-                    parameter.find(f'./{self.xml_ns}Weight').text = widgets_info["group_service_weight"]["variable"].get()
+                    parameter.find(f'./{self.xml_ns}Weight').text = widgets_info["group_service_weight"][
+                        "variable"].get()
                 if not is_empty(text_variable=widgets_info["group_service_factor"]["variable"]):
-                    parameter.find(f'./{self.xml_ns}Factor').text = widgets_info["group_service_factor"]["variable"].get()
+                    parameter.find(f'./{self.xml_ns}Factor').text = widgets_info["group_service_factor"][
+                        "variable"].get()
 
             elif param_name == "GroupServicesMaxMeters":
                 if not is_empty(text_variable=widgets_info["group_service_max_meter"]["variable"]):
-                    parameter.find(f'./{self.xml_ns}Value').text = widgets_info["group_service_max_meter"]["variable"].get()
+                    parameter.find(f'./{self.xml_ns}Value').text = widgets_info["group_service_max_meter"][
+                        "variable"].get()
 
             elif param_name == "RestrictToServiceWindow":
                 parameter.find(f'./{self.xml_ns}Value').text = widgets_info["restrict_service_window"]["variable"].get()
