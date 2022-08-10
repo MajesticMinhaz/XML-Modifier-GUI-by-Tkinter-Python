@@ -30,7 +30,7 @@ if __name__ == '__main__':
     label_frame = Frame(master=root, background="gray20")
     label_frame.grid(row=0, column=0, padx=10, pady=10)
 
-    canvas = Canvas(master=label_frame, width=880, height=640, background="gray20")
+    canvas = Canvas(master=label_frame, width=1125, height=640, background="gray20")
     canvas.pack(side=LEFT, fill=BOTH, expand=YES)
     y_scroll_bar = Scrollbar(master=label_frame, orient=VERTICAL, command=canvas.yview)
     y_scroll_bar.pack(side=RIGHT, fill=Y, padx=5, pady=5)
