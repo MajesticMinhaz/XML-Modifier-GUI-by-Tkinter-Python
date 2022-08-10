@@ -11,6 +11,7 @@
 """
 import re
 import os
+import shutil
 from datetime import timedelta
 from widgets_info import widgets_info
 from widgets import Widgets
@@ -547,5 +548,58 @@ class Ui:
             else:
                 pass
 
-        self.xml_tree.write(f'{self.new_request_id}.xml', xml_declaration=True)
-        messagebox.showinfo(title="Successful", message=f"Successfully created {self.new_request_id}.xml file.")
+        self.create_folders()
+
+    def create_folders(self):
+        if not is_empty(text_variable=widgets_info.get('base_path')['variable']):
+            if '_templates' in os.listdir(widgets_info.get("base_path")["variable"].get()):
+                base_folder = f"{widgets_info.get('base_path')['variable'].get()}-output"
+                sub_folder = f'YYYYMMDD_LL1_{widgets_info.get("twin_iteration_n")["variable"].get()}'
+                for directory_name in os.listdir(widgets_info.get("base_path")["variable"].get()):
+                    if re.fullmatch(pattern=r"^[0-9]+_LL1_baseline$", string=directory_name):
+                        sub_folder = re.sub(
+                            pattern=r"(baseline)$",
+                            repl=widgets_info.get("twin_iteration_n")["variable"].get(),
+                            string=directory_name
+                        )
+                    else:
+                        pass
+                sub_folder = os.path.join(base_folder, sub_folder)
+                request_folder = os.path.join(sub_folder, "Request")
+                new_xml_file_path = os.path.join(request_folder, f'{self.new_request_id}.xml')
+
+                try:
+                    os.mkdir(base_folder)
+                    os.mkdir(sub_folder)
+                    os.mkdir(request_folder)
+                except FileExistsError:
+                    shutil.rmtree(base_folder)
+                    os.mkdir(base_folder)
+                    os.mkdir(sub_folder)
+                    os.mkdir(request_folder)
+                except OSError:
+                    shutil.rmtree(base_folder)
+                    os.mkdir(base_folder)
+                    os.mkdir(sub_folder)
+                    os.mkdir(request_folder)
+                self.xml_tree.write(new_xml_file_path, xml_declaration=True)
+
+                source_directory = os.path.join(widgets_info.get('base_path')['variable'].get(), "_templates")
+
+                for file_name in os.listdir(source_directory):
+                    if file_name == "COPERT_vehicle_types.xlsx":
+                        continue
+                    else:
+                        source = os.path.join(source_directory, file_name)
+                        destination = os.path.join(sub_folder, file_name)
+
+                        if os.path.isfile(source):
+                            shutil.copy(source, destination)
+                        else:
+                            pass
+
+                messagebox.showinfo(title="Successful", message=f"Successfully created {new_xml_file_path}.")
+            else:
+                messagebox.showerror("Wrong Directory", "You have selected a wrong directory as Base Path.")
+        else:
+            err_message_dialog(field_name="Base Path")
