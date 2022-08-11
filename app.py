@@ -626,7 +626,7 @@ class Ui:
                     need_copy_files = [
                         "lmt_LEAD_input_to_COPERT.xlsx",
                         "lmt_LEAD_input_to_COPERT.json",
-                        "lmt_LEAD_input_to_EVCO2_1_factors.xls",
+                        "lmt_LEAD_input_to_EVCO2_1_factors.xlsx",
                         "lmt_LEAD_input_to_EVCO2_2_energy_consumption.xlsx",
                         "lmt_LEAD_input_to_EVCO2.json"
                     ]
@@ -634,7 +634,7 @@ class Ui:
                     need_copy_files = ["lmt_LEAD_input_to_COPERT.xlsx", "file lmt_LEAD_input_to_COPERT.json"]
                 else:
                     need_copy_files = [
-                        "lmt_LEAD_input_to_EVCO2_1_factors.xls",
+                        "lmt_LEAD_input_to_EVCO2_1_factors.xlsx",
                         "lmt_LEAD_input_to_EVCO2_2_energy_consumption.xlsx",
                         "lmt_LEAD_input_to_EVCO2.json"
                     ]
