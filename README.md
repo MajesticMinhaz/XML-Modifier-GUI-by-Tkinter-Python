@@ -40,7 +40,7 @@ To build and run this application locally, you'll need latest versions of Git, G
 ```
 ### Build
 ```commandline
-    pyinstaller --onefile xml_modifier.py
+    pyinstaller --noconsole --onefile xml_modifier.py
 ```
 Then you will get [dist](https://github.com/mdminhaz2003/XML-Modifier-GUI-by-Tkinter-Python/tree/master/dist) folder in your directory. inside this folder you will find your executable file. 
 # Run the app
