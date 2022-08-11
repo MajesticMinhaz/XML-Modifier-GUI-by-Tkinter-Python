@@ -622,10 +622,25 @@ class Ui:
 
                 self.xml_tree.write(output_xml_file_path, xml_declaration=True)
 
+                if re.fullmatch(r"^.*[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9](_to-be).*", initial_base_path):
+                    need_copy_files = [
+                        "lmt_LEAD_input_to_COPERT.xlsx",
+                        "lmt_LEAD_input_to_COPERT.json",
+                        "lmt_LEAD_input_to_EVCO2_1_factors.xls",
+                        "lmt_LEAD_input_to_EVCO2_2_energy_consumption.xlsx",
+                        "lmt_LEAD_input_to_EVCO2.json"
+                    ]
+                elif re.fullmatch(r"^.*[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9].*(diesel|hybrid).*", initial_base_path):
+                    need_copy_files = ["lmt_LEAD_input_to_COPERT.xlsx", "file lmt_LEAD_input_to_COPERT.json"]
+                else:
+                    need_copy_files = [
+                        "lmt_LEAD_input_to_EVCO2_1_factors.xls",
+                        "lmt_LEAD_input_to_EVCO2_2_energy_consumption.xlsx",
+                        "lmt_LEAD_input_to_EVCO2.json"
+                    ]
+
                 for file_name in os.listdir(_templates_path):
-                    if file_name == "COPERT_vehicle_types.xlsx":
-                        continue
-                    else:
+                    if file_name in need_copy_files:
                         source = os.path.join(_templates_path, file_name)
                         destination = os.path.join(output_base_path, file_name)
 
@@ -633,6 +648,8 @@ class Ui:
                             shutil.copy(source, destination)
                         else:
                             pass
+                    else:
+                        continue
 
                 new_vehicle_values = widgets_info.get("new_vehicles")["variable"].get().split(sep=",")
                 new_vehicle_data = [
