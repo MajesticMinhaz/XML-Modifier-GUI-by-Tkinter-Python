@@ -596,10 +596,12 @@ class Ui:
             if '_templates' in os.listdir(widgets_info.get("base_path")["variable"].get()):
                 _templates_path = os.path.join(widgets_info.get('base_path')['variable'].get(), "_templates")
 
-                output_base_path = re.search(
+                initial_base_path = re.search(
                     pattern=r"^.*([0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]_.*/)",
                     string=widgets_info.get("xml_file_path")["variable"].get()
-                ).group()[0:-9] + '-' + widgets_info.get("twin_iteration_n")["variable"].get()
+                ).group()[0:-9]
+
+                output_base_path = f'{initial_base_path}-{widgets_info.get("twin_iteration_n")["variable"].get()}'
 
                 output_request_path = os.path.join(output_base_path, "Request")
                 output_xml_file_path = os.path.join(output_request_path, f"{self.new_request_id}.xml")
